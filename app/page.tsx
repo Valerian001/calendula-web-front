@@ -1,103 +1,111 @@
-import Image from "next/image";
+"use client"
+import React, { useState, useEffect, use } from 'react';
+import { ArrowRight, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isVisible, setIsVisible] = useState(false);
+  const [priceAnimation, setPriceAnimation] = useState(0);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    setIsVisible(true);
+    const interval = setInterval(() => {
+      setPriceAnimation(prev => (prev + 1) % 3);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden">
+      {/* Navigation */}
+      <nav className="relative z-10 px-6 py-6">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <div className="text-2xl font-bold text-white flex items-center gap-2">
+            <Image src="/logo.png" alt="Calendula Logo" width={300} height={300} className="rounded-full" />
+          </div>
+          <div className="hidden md:flex space-x-8 text-gray-300">
+            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Shop</a>
+            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">How it Works</a>
+            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Login/Signup</a>
+            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Contact Us</a>
+          </div>
+          <div className="hflex md:hidden space-x-8 text-gray-300">
+            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Login/Signup</a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="relative z-10 px-6 py-20">
+        <div className="max-w-6xl mx-auto text-center">
+          {/* Main heading with stagger animation */}
+          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-white mb-8 leading-tight">
+              Welcome to
+              <br />
+              <span className="text-yellow-400 animate-pulse">Calendula</span>
+            </h1>
+          </div>
+
+          {/* Subtitle with delay */}
+          <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light max-w-4xl mx-auto leading-relaxed">
+              The first online store that allows
+            </p>
+            <div className="relative inline-block">
+              <p className="text-4xl md:text-5xl font-bold text-yellow-400 mb-12 relative">
+                bargaining on products
+                <span className="absolute -inset-2 bg-yellow-400/20 blur-lg rounded-lg animate-pulse" />
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive pricing demo */}
+          <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} mb-16`}>
+            <div className="bg-gray-800/60 backdrop-blur-lg rounded-3xl p-8 max-w-md mx-auto border border-gray-700/50">
+              <div className="text-gray-300 mb-4">Vintage Bag</div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-gray-400 line-through text-xl">₦5000.00</span>
+                <TrendingUp className="w-6 h-6 text-gray-400" />
+              </div>
+              <div className="text-3xl font-bold text-yellow-400 transition-all duration-500">
+                ₦{[4800, 4700, 4500][priceAnimation]}
+              </div>
+              <div className="text-sm text-gray-400 mt-2">Price negotiated in real-time</div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className={`transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <button className="group relative inline-flex items-center gap-4 bg-yellow-400 text-black px-12 py-6 rounded-full text-xl font-bold hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-400/25">
+              <span className="relative z-10">No fuss, straight to shopping</span>
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+            </button>
+          </div>
+
+          {/* Feature highlights */}
+          <div className={`transition-all duration-1000 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} mt-20`}>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {[
+                { icon: Zap, title: "Instant Bargaining", desc: "Real-time price negotiations" },
+                { icon: TrendingUp, title: "Best Deals", desc: "Always get the lowest price" },
+                // { icon: Sparkles, title: "Smart Matching", desc: "AI-powered deal optimization" }
+              ].map((feature, i) => (
+                <div key={i} className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/30 hover:border-yellow-400/50 transition-all duration-300 hover:scale-105">
+                  <feature.icon className="w-12 h-12 text-yellow-400 mb-4 mx-auto" />
+                  <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                  <p className="text-gray-400">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom accent */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent" />
     </div>
   );
 }
