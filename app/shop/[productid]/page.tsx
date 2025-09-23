@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, use } from 'react';
+import React, { useState} from 'react';
 import { ArrowLeft, Heart, Share2, Star, ShoppingCart, Zap, MessageCircle, X, Check, AlertCircle, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type NegotiationEntry = {
@@ -27,7 +27,7 @@ export default function ProductDetail() {
     category: "Electronics",
     originalPrice: 129.99,
     currentPrice: 89.99,
-    lowestPrice: 75.00, // Vendor's minimum acceptable price
+    lowestPrice: 75.00,
     rating: 4.5,
     reviews: 234,
     inStock: 15,
