@@ -2,8 +2,10 @@
 import React, { useState, useEffect, use } from 'react';
 import { ArrowRight, Sparkles, TrendingUp, Zap } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter()
   const [isVisible, setIsVisible] = useState(false);
   const [priceAnimation, setPriceAnimation] = useState(0);
 
@@ -25,7 +27,7 @@ export default function Home() {
             <Image src="/logo.png" alt="Calendula Logo" width={300} height={300} className="rounded-full" />
           </div>
           <div className="hidden md:flex space-x-8 text-gray-300">
-            <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Shop</a>
+            <a href="#" onClick={()=>router.push("/shop")} className="hover:text-yellow-400 transition-colors duration-300">Shop</a>
             <a href="#" className="hover:text-yellow-400 transition-colors duration-300">How it Works</a>
             <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Login/Signup</a>
             <a href="#" className="hover:text-yellow-400 transition-colors duration-300">Contact Us</a>
