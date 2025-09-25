@@ -15,6 +15,10 @@ export const storeApi = createApi({
 			query: () => "fashion/list/",
 			providesTags: ["Fashion"],
 		}),
+		getFashionById: builder.query<any, number>({
+			query: (id) => `fashion/list/?id=${id}`,
+			providesTags: ["Fashion"],
+		}),
 		createFashion: builder.mutation<any, Partial<any>>({
 			query: (body) => ({
 				url: "fashion/create/",
@@ -42,6 +46,10 @@ export const storeApi = createApi({
 		// ---- FOOD ----
 		getFood: builder.query<any[], void>({
 			query: () => "food/list/",
+			providesTags: ["Food"],
+		}),
+		getFoodById: builder.query<any, number>({
+			query: (id) => `food/list/?id=${id}`,
 			providesTags: ["Food"],
 		}),
 		createFood: builder.mutation<any, Partial<any>>({
@@ -73,6 +81,10 @@ export const storeApi = createApi({
 			query: () => "gadget/list/",
 			providesTags: ["Gadget"],
 		}),
+		getGadgetById: builder.query<any, number>({
+			query: (id) => `gadget/list/?id=${id}`,
+			providesTags: ["Gadget"],
+		}),
 		createGadget: builder.mutation<any, Partial<any>>({
 			query: (body) => ({
 				url: "gadget/create/",
@@ -101,16 +113,21 @@ export const storeApi = createApi({
 
 // Export hooks
 export const {
-  useGetFashionQuery,
-  useCreateFashionMutation,
-  useUpdateFashionMutation,
-  useDeleteFashionMutation,
-  useGetFoodQuery,
-  useCreateFoodMutation,
-  useUpdateFoodMutation,
-  useDeleteFoodMutation,
-  useGetGadgetQuery,
-  useCreateGadgetMutation,
-  useUpdateGadgetMutation,
-  useDeleteGadgetMutation,
+	useGetFashionQuery,
+	useGetFashionByIdQuery,
+	useCreateFashionMutation,
+	useUpdateFashionMutation,
+	useDeleteFashionMutation,
+
+	useGetFoodQuery,
+	useGetFoodByIdQuery,
+	useCreateFoodMutation,
+	useUpdateFoodMutation,
+	useDeleteFoodMutation,
+
+	useGetGadgetQuery,
+	useGetGadgetByIdQuery,
+	useCreateGadgetMutation,
+	useUpdateGadgetMutation,
+	useDeleteGadgetMutation,
 } = storeApi;

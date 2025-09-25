@@ -61,7 +61,7 @@
 
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-// import cartReducer from "@/store/slice/cartSlice";
+import cartReducer from "@/store/slices/cartSlice";
 import { storeApi } from "./services/storeApi";
 
 import {
@@ -86,7 +86,7 @@ const persistConfig = {
 
 // 2️⃣ Combine reducers
 const rootReducer = combineReducers({
-	// cart: cartReducer,
+	cart: cartReducer,
 	[storeApi.reducerPath]: storeApi.reducer,
 });
 

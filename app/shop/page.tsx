@@ -1,177 +1,116 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Heart, ShoppingCart, Star, TrendingDown, Zap, Eye} from 'lucide-react';
-import Link from 'next/link';
+"use client";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  Search,
+  Heart,
+  ShoppingCart,
+  Star,
+  TrendingDown,
+  Zap,
+  Eye,
+} from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  useGetFashionQuery,
+  useGetFoodQuery,
+  useGetGadgetQuery,
+} from "@/store/services/storeApi";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store/store";
+import { setCartItems, removeItem } from "@/store/slices/cartSlice";
 
 export default function CalendulaShopping() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [favoriteItems, setFavoriteItems] = useState(new Set());
-  const [cartItems, setCartItems] = useState(new Set());
-  const [priceAnimations, setPriceAnimations] = useState<{ [key: number]: number }>({});
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [favoriteItems, setFavoriteItems] = useState(new Set<number>());
+  const cartItems = useSelector((state: RootState) => state.cart.cartItems);
+  const dispatch = useDispatch();
 
-  // Sample product data
-  const products = [
-    {
-      id: 1,
-      name: "Wireless Bluetooth Headphones",
-      category: "electronics",
-      originalPrice: 129.99,
-      currentPrice: 89.99,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&crop=center",
-      rating: 4.5,
-      reviews: 234,
-      discount: 31,
-      negotiable: true
-    },
-    {
-      id: 2,
-      name: "Organic Cotton T-Shirt",
-      category: "clothing",
-      originalPrice: 45.00,
-      currentPrice: 32.00,
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop&crop=center",
-      rating: 4.8,
-      reviews: 156,
-      discount: 29,
-      negotiable: true
-    },
-    {
-      id: 3,
-      name: "Smart Fitness Tracker",
-      category: "electronics",
-      originalPrice: 199.99,
-      currentPrice: 149.99,
-      image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop&crop=center",
-      rating: 4.3,
-      reviews: 89,
-      discount: 25,
-      negotiable: true
-    },
-    {
-      id: 4,
-      name: "Ceramic Coffee Mug Set",
-      category: "home",
-      originalPrice: 34.99,
-      currentPrice: 24.99,
-      image: "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=400&h=300&fit=crop&crop=center",
-      rating: 4.7,
-      reviews: 312,
-      discount: 29,
-      negotiable: true
-    },
-    {
-      id: 5,
-      name: "Leather Crossbody Bag",
-      category: "accessories",
-      originalPrice: 89.99,
-      currentPrice: 67.99,
-      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop&crop=center",
-      rating: 4.6,
-      reviews: 178,
-      discount: 24,
-      negotiable: true
-    },
-    {
-      id: 6,
-      name: "Indoor Plant Collection",
-      category: "home",
-      originalPrice: 67.50,
-      currentPrice: 48.99,
-      image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop&crop=center",
-      rating: 4.4,
-      reviews: 92,
-      discount: 27,
-      negotiable: true
-    },
-    {
-      id: 7,
-      name: "Vintage Sunglasses",
-      category: "accessories",
-      originalPrice: 78.00,
-      currentPrice: 58.50,
-      image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop&crop=center",
-      rating: 4.2,
-      reviews: 145,
-      discount: 25,
-      negotiable: true
-    },
-    {
-      id: 8,
-      name: "Ergonomic Desk Chair",
-      category: "furniture",
-      originalPrice: 299.99,
-      currentPrice: 219.99,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop&crop=center",
-      rating: 4.5,
-      reviews: 67,
-      discount: 27,
-      negotiable: true
-    }
-  ];
+  // ---- Fetch products from API ----
+  const { data: fashionData = [], isLoading: loadingFashion } =
+    useGetFashionQuery();
+  const { data: foodData = [], isLoading: loadingFood } = useGetFoodQuery();
+  const { data: gadgetData = [], isLoading: loadingGadget } =
+    useGetGadgetQuery();
 
+  // Merge products from all categories
+  const products = useMemo(() => {
+    return [
+      ...fashionData.map((item: any) => ({
+        ...item,
+        category: "fashion",
+      })),
+      ...foodData.map((item: any) => ({
+        ...item,
+        category: "food",
+      })),
+      ...gadgetData.map((item: any) => ({
+        ...item,
+        category: "gadget",
+      })),
+    ];
+  }, [fashionData, foodData, gadgetData]);
+
+  // Categories
   const categories = [
-    { id: 'all', name: 'All Products' },
-    { id: 'electronics', name: 'Electronics' },
-    { id: 'clothing', name: 'Clothing' },
-    { id: 'home', name: 'Home & Garden' },
-    { id: 'accessories', name: 'Accessories' },
-    { id: 'furniture', name: 'Furniture' }
+    { id: "all", name: "All Products" },
+    { id: "fashion", name: "Fashion" },
+    { id: "food", name: "Food" },
+    { id: "gadget", name: "Gadgets" },
   ];
 
-  // Filter products based on category and search
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+  // Filter products
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory =
+      selectedCategory === "all" ||
+      product.category?.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesSearch = product.name
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  // Handle favorite toggle
+  // Favorite toggle
   const toggleFavorite = (productId: number) => {
-    setFavoriteItems(prev => {
+    setFavoriteItems((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
-      } else {
-        newSet.add(productId);
-      }
+      newSet.has(productId) ? newSet.delete(productId) : newSet.add(productId);
       return newSet;
     });
   };
 
-  // Handle cart toggle
-  const toggleCart = (productId: number) => {
-    setCartItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
+  // Cart toggle (increment qty if exists)
+  const toggleCart = (product: any) => {
+    const exists = cartItems.find((item) => item.id === product.id);
+
+    if (exists) {
+      if (exists.quantity > 1) {
+        // Decrease quantity by 1
+        dispatch(setCartItems(cartItems.filter((item) => item.id !== product.id)));
       } else {
-        newSet.add(productId);
+        // Quantity = 1 → remove completely
+        dispatch(setCartItems(cartItems.filter((item) => item.id !== product.id)));
       }
-      return newSet;
-    });
+    } else {
+      // Add new product with quantity = 1
+      dispatch(setCartItems([...cartItems, { ...product, quantity: 1 }]));
+    }
   };
 
-  // Simulate price negotiations
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const productId = products[Math.floor(Math.random() * products.length)].id;
-      setPriceAnimations(prev => ({
-        ...prev,
-        [productId]: Date.now()
-      }));
-      
-      setTimeout(() => {
-        setPriceAnimations(prev => {
-          const newState = { ...prev };
-          delete newState[productId];
-          return newState;
-        });
-      }, 2000);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Loading state with skeleton shimmer
+  if (loadingFashion || loadingFood || loadingGadget) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="animate-pulse bg-gray-800/40 rounded-2xl h-72"
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
@@ -186,15 +125,15 @@ export default function CalendulaShopping() {
               <h1 className="text-3xl font-bold text-white">Shop</h1>
             </div>
             <div className="text-sm text-gray-400">
-              {cartItems.size} items in cart
+              {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
             </div>
           </div>
 
-          {/* Search and Filters */}
+          {/* Search + Category */}
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search products..."
@@ -206,14 +145,14 @@ export default function CalendulaShopping() {
 
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
+              {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ₦{
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     selectedCategory === category.id
-                      ? 'bg-yellow-400 text-black'
-                      : 'bg-gray-800/60 text-gray-300 hover:bg-gray-700/60 border border-gray-700/30'
+                      ? "bg-yellow-400 text-black"
+                      : "bg-gray-800/60 text-gray-300 hover:bg-gray-700/60 border border-gray-700/30"
                   }`}
                 >
                   {category.name}
@@ -235,7 +174,7 @@ export default function CalendulaShopping() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <div
-              key={product.id}
+              key={`${product.category || product.category_id}-${product.id}`}
               className="group bg-gray-800/40 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/30 hover:border-yellow-400/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/10"
             >
               {/* Product Image */}
@@ -243,17 +182,18 @@ export default function CalendulaShopping() {
                 <img
                   src={product.image}
                   alt={product.name}
+                  loading="lazy"
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                
+
                 {/* Overlay buttons */}
                 <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button
                     onClick={() => toggleFavorite(product.id)}
-                    className={`p-2 rounded-full backdrop-blur-sm transition-colors duration-300 ₦{
+                    className={`p-2 rounded-full backdrop-blur-sm transition-colors duration-300 ${
                       favoriteItems.has(product.id)
-                        ? 'bg-yellow-400 text-black'
-                        : 'bg-black/50 text-white hover:bg-yellow-400 hover:text-black'
+                        ? "bg-yellow-400 text-black"
+                        : "bg-black/50 text-white hover:bg-yellow-400 hover:text-black"
                     }`}
                   >
                     <Heart className="w-4 h-4" />
@@ -290,40 +230,52 @@ export default function CalendulaShopping() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm text-gray-300">{product.rating}</span>
+                    <span className="text-sm text-gray-300">
+                      {product.rating || 4.5}
+                    </span>
                   </div>
-                  <span className="text-xs text-gray-500">({product.reviews} reviews)</span>
+                  <span className="text-xs text-gray-500">
+                    ({product.reviews || 0} reviews)
+                  </span>
                 </div>
 
                 {/* Pricing */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 line-through text-sm">
-                      ₦{product.originalPrice}
-                    </span>
-                    <span className={`text-xl font-bold text-yellow-400 transition-all duration-300 ₦{
-                      priceAnimations[product.id] ? 'scale-110' : ''
-                    }`}>
-                      ₦{product.currentPrice}
-                    </span>
+                    {product.originalPrice && (
+                      <span className="text-gray-400 line-through text-sm">
+                        ₦{product.originalPrice}
+                      </span>
+                    )}
+                    <motion.span
+                      key={product.price}
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="text-xl font-bold text-yellow-400"
+                    >
+                      ₦{product.price}
+                    </motion.span>
                   </div>
                 </div>
 
                 {/* Add to Cart Button */}
                 <button
-                  onClick={() => toggleCart(product.id)}
-                  className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 ₦{
-                    cartItems.has(product.id)
-                      ? 'bg-yellow-400 text-black hover:bg-yellow-500'
-                      : 'bg-gray-700/50 text-white hover:bg-yellow-400 hover:text-black border border-gray-600/50 hover:border-yellow-400'
+                  onClick={() => toggleCart(product)}
+                  className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+                    cartItems.some((item) => item.id === product.id)
+                      ? "bg-yellow-400 text-black hover:bg-yellow-500"
+                      : "bg-gray-700/50 text-white hover:bg-yellow-400 hover:text-black border border-gray-600/50 hover:border-yellow-400"
                   }`}
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  {cartItems.has(product.id) ? 'In Cart' : 'Add to Cart'}
+                  {cartItems.some((item) => item.id === product.id)
+                    ? "In Cart"
+                    : "Add to Cart"}
                 </button>
 
                 {/* Negotiate Button */}
-                <Link href={`/shop/1`} >
+                <Link href={`/shop/${product.category || product.category_id}/${product.id}`}>
                   <div className="w-full mt-2 py-2 px-4 rounded-xl bg-transparent border border-yellow-400/50 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-300 text-sm font-medium">
                     Make an Offer
                   </div>
@@ -339,8 +291,12 @@ export default function CalendulaShopping() {
             <div className="w-20 h-20 bg-gray-800/60 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-10 h-10 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
-            <p className="text-gray-400">Try adjusting your search or filter criteria</p>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              No products found
+            </h3>
+            <p className="text-gray-400">
+              Try adjusting your search or filter criteria
+            </p>
           </div>
         )}
       </div>
